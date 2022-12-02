@@ -63,4 +63,67 @@ fs.readFile(filePath, 'utf8', (err, data) => {
     });
 
     console.log(totalScore);
+
+    //part 2
+    let gamesFixed = data.split('\n').map(g => g.split(' '));
+
+    gamesFixed.map(g => {
+        switch (g[1]) {
+            case 'X':
+                g[2] = 0;
+                break;
+            case 'Y':
+                g[2] = 3;
+                break;
+            case 'Z':
+                g[2] = 6;
+                break;
+        }
+
+        switch (g[0]) {
+            case 'A':
+                g[0] = 1;
+                break;
+            case 'B':
+                g[0] = 2;
+                break;
+            case 'C':
+                g[0] = 3;
+                break;
+        }
+    });
+
+    console.log(gamesFixed);
+
+    gamesFixed.map(g => {
+        if (g[2] === 3) {
+            g[3] = g[0];
+        } else if (g[2] === 0) { //we need to lose
+            if (g[0] === 1) { //rock beats scissors
+                g[3] = 3;
+            } else if (g[0] === 2) { //paper beats rock
+                g[3] = 1;
+            } else if (g[0] === 3) { //scissors beats paper
+                g[3] = 2;
+            }
+        } else if (g[2] === 6) { //we need to win
+            if (g[0] === 1) { //rock loses to paper
+                g[3] = 2;
+            } else if (g[0] === 2) { //paper loses to scissors
+                g[3] = 3;
+            } else if (g[0] === 3) { //scissors loses to rock
+                g[3] = 1;
+            }
+        }
+    });
+
+    console.log(gamesFixed);
+
+    let fixedTotalScore = 0;
+
+    gamesFixed.map(g => {
+        fixedTotalScore += g[3] + g[2];
+    });
+
+    console.log(fixedTotalScore);
 });
