@@ -24,4 +24,18 @@ fs.readFile(filePath, 'utf8', (err, data) => {
     }).filter(p => p !== 0);
 
     console.log(encompassedPairs.length);
+
+    let overlappingPairs = pairs.map(p => {
+        if (p[0][0] > p[1][1]) { //Elf 1 does not overlap Elf 2
+            return 0;
+        } else if (p[1][0] > p[0][1]) { //Elf 2 does not overlap Elf 1
+            return 0;
+        } else {
+            return p;
+        }
+    }).filter(p => p !== 0);
+
+    console.log(overlappingPairs);
+
+    console.log(overlappingPairs.length);
 });
