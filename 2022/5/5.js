@@ -13,7 +13,7 @@ fs.readFile(filePath, 'utf8', (err, data) => {
     let cargo = input[0]
                     .map(l => l.match(/([ \[\]A-Z1-9]{2,4})/g)
                     .map(m => m.trim()));;
-    let crainActions = input[1]
+    let craneActions = input[1]
                             .map(a => a.split('move ').map(i => i.split(' from ').map(j => j.split(' to '))))
                             .map(a => {
                                 return {
@@ -43,7 +43,7 @@ fs.readFile(filePath, 'utf8', (err, data) => {
     let stacksPart2 = JSON.parse(JSON.stringify(stacks));
 
     //start taking actions
-    for (let a of crainActions) {
+    for (let a of craneActions) {
         let fromStack = stacks[a.fromStack];
         let toStack = stacks[a.toStack];
 
@@ -55,7 +55,7 @@ fs.readFile(filePath, 'utf8', (err, data) => {
     let topOfStacks = stacks.map(s => s.shift());
     console.log(topOfStacks);
 
-    for (let a of crainActions) {
+    for (let a of craneActions) {
         let fromStack = stacksPart2[a.fromStack];
         let toStack = stacksPart2[a.toStack];
 
