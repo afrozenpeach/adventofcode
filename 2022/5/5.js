@@ -39,7 +39,6 @@ fs.readFile(filePath, 'utf8', (err, data) => {
         s.pop();
     }
 
-
     //clone for part 2
     let stacksPart2 = JSON.parse(JSON.stringify(stacks));
 
