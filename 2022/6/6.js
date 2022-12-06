@@ -8,6 +8,12 @@ fs.readFile(filePath, 'utf8', (err, data) => {
         return;
     }
 
+    findUniqueMarker(data, 4);
+
+    findUniqueMarker(data, 14);
+});
+
+function findUniqueMarker(data, length) {
     let marker = [];
     let count = 0;
 
@@ -15,11 +21,11 @@ fs.readFile(filePath, 'utf8', (err, data) => {
         marker.push(c);
         count++;
 
-        if (marker.length > 4) {
+        if (marker.length > length) {
             marker.shift();
         }
 
-        if (marker.length === 4) {
+        if (marker.length === length) {
             let testMarker = marker.join('');
             let clean = true;
 
@@ -39,4 +45,4 @@ fs.readFile(filePath, 'utf8', (err, data) => {
             }
         }
     }
-});
+}
