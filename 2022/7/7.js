@@ -77,6 +77,24 @@ fs.readFile(filePath, 'utf8', (err, data) => {
     }
 
     console.log(sum);
+
+    let unusedSpace = 70000000 - directoryStructure[0].size;
+    let neededSpace = 30000000 - unusedSpace;
+
+    let currentLeastSizes = [];
+    atLeastSize(directoryStructure[0], neededSpace, currentLeastSizes);
+
+    currentLeastSizes.sort((a, b) => {
+        if (a.size < b.size) {
+            return -1;
+        } else if (a.size > b.size) {
+            return 1;
+        } else {
+            return 0;
+        }
+    })
+
+    console.log(currentLeastSizes[0].size);
 });
 
 
@@ -97,5 +115,16 @@ function maxSize(dir, size, currentMaxSizes) {
             maxSize(d, size, currentMaxSizes);
         }
     }
+}
 
+function atLeastSize(dir, size, currentLeastSizes) {
+    if (dir.contents !== null) {
+        if (dir.size >= size) {
+            currentLeastSizes.push(dir);
+        }
+
+        for (const d of dir.contents) {
+            atLeastSize(d, size, currentLeastSizes);
+        }
+    }
 }
