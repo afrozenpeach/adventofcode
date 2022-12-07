@@ -1,8 +1,5 @@
-const { dir } = require('console');
 const fs = require('fs');
-const { totalmem } = require('os');
 const path = require('path');
-const { exit } = require('process');
 const filePath = path.join(__dirname, '7.txt');
 
 fs.readFile(filePath, 'utf8', (err, data) => {
