@@ -27,6 +27,28 @@ fs.readFile(filePath, 'utf8', (err, data) => {
     }
 
     console.log(countVisible);
+
+    let scores = [];
+
+    for (let x = 0; x < grid[0].length; x++) {
+        for (let y = 0; y < grid.length; y++) {
+            let score = getScenicScore(grid, x, y);
+
+            scores.push(score);
+        }
+    }
+
+    scores.sort((a, b) => {
+        if (b > a) {
+            return 1;
+        } else if (a > b) {
+            return -1;
+        } else {
+            return 0;
+        }
+    });
+
+    console.log(scores[0]);
 });
 
 function isVisible(grid, x, y) {
@@ -63,8 +85,32 @@ function isVisible(grid, x, y) {
     return false;
 }
 
-function scenicScore(grid, x, y) {
+function getScenicScore(grid, x, y) {
+    let left = getLeft(grid, x, y).reverse();
+    let right = getRight(grid, x, y);
+    let up = getUp(grid, x, y).reverse();
+    let down = getDown(grid, x, y);
 
+    let scoreLeft = calcScoreForDirection(left, grid[y][x]);
+    let scoreRight = calcScoreForDirection(right, grid[y][x]);
+    let scoreUp = calcScoreForDirection(up, grid[y][x]);
+    let scoreDown = calcScoreForDirection(down, grid[y][x]);
+    let score =  scoreLeft * scoreRight * scoreUp * scoreDown;
+    return score;
+}
+
+function calcScoreForDirection(direction, currentTree) {
+    let treesVisible = 0;
+
+    for (let t of direction) {
+        treesVisible++;
+
+        if (t >= currentTree) {
+            break;
+        }
+    }
+
+    return treesVisible;
 }
 
 function getLeft(grid, x, y) {
