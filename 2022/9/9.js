@@ -1,7 +1,7 @@
 const { count } = require('console');
 const fs = require('fs');
 const path = require('path');
-const filePath = path.join(__dirname, 'sample.txt');
+const filePath = path.join(__dirname, '9.txt');
 
 fs.readFile(filePath, 'utf8', (err, data) => {
     if (err) {
@@ -35,7 +35,7 @@ fs.readFile(filePath, 'utf8', (err, data) => {
 
         switch(hs[0]) {
             case 'U':
-                for (let i = 0; i < hs[1]; i++) {
+                for (let i = 0; i < Number(hs[1]); i++) {
                     grid[currentHeadCoordinates.y][currentHeadCoordinates.x].head = false;
 
                     if (currentHeadCoordinates.y === 0) {
@@ -150,13 +150,13 @@ fs.readFile(filePath, 'utf8', (err, data) => {
 function moveTail(currentHeadCoordinates, currentTailCoordinates, grid) {
     grid[currentTailCoordinates.y][currentTailCoordinates.x].tail = false;
 
-    if (currentHeadCoordinates.x === currentTailCoordinates.x + 2) {
+    if (currentHeadCoordinates.x === currentTailCoordinates.x + 2 && currentHeadCoordinates.y === currentTailCoordinates.y) {
         currentTailCoordinates.x++;
-    } else if (currentHeadCoordinates.x === currentTailCoordinates.x - 2) {
+    } else if (currentHeadCoordinates.x === currentTailCoordinates.x - 2 && currentHeadCoordinates.y === currentTailCoordinates.y) {
         currentTailCoordinates.x--;
-    } else if (currentHeadCoordinates.y === currentTailCoordinates.y + 2) {
+    } else if (currentHeadCoordinates.y === currentTailCoordinates.y + 2 && currentHeadCoordinates.x === currentTailCoordinates.x) {
         currentTailCoordinates.y++;
-    } else if (currentHeadCoordinates.y === currentTailCoordinates.y - 2) {
+    } else if (currentHeadCoordinates.y === currentTailCoordinates.y - 2 && currentHeadCoordinates.x === currentTailCoordinates.x) {
         currentTailCoordinates.y--;
     } else if (!isAdjacent(currentHeadCoordinates, currentTailCoordinates) && (currentHeadCoordinates.x !== currentTailCoordinates.x || currentHeadCoordinates.y !== currentTailCoordinates.y)) {
         if (currentHeadCoordinates.x > currentTailCoordinates.x && currentHeadCoordinates.y > currentTailCoordinates.y) {
@@ -188,23 +188,27 @@ function isAdjacent(currentHeadCoordinates, currentTailCoordinates) {
 }
 
 function drawGrid(grid) {
-    for (let y of grid) {
-        let line = '';
-        for (let x of y) {
-            let character = '.';
+    let draw = false;
 
-            if (x.head) {
-                character = 'H';
-            } else if (x.tail) {
-                character = 'T';
+    if (draw) {
+        for (let y of grid) {
+            let line = '';
+            for (let x of y) {
+                let character = '.';
+
+                if (x.head) {
+                    character = 'H';
+                } else if (x.tail) {
+                    character = 'T';
+                }
+
+                line += character;
             }
-
-            line += character;
+            console.log(line);
         }
-        console.log(line);
-    }
 
-    console.log('------------');
+        console.log('------------');
+    }
 }
 
 function countVisited(grid) {
