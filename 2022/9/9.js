@@ -10,204 +10,161 @@ fs.readFile(filePath, 'utf8', (err, data) => {
     }
 
     var headSteps = data.split('\n').map(l => l.split(' '));
+    //knotMovement(headSteps, 2);
+    knotMovement(headSteps, 10);
+});
 
+function knotMovement(headSteps, knotCount) {
     var grid = [[{
-        'tailVisited': true,
-        'head': true,
-        'tail': true
+        'tailVisited': true
     }]];
 
-    let currentHeadCoordinates = {
-        'x': 0,
-        'y': 0
-    };
+    let knots = [];
 
-    let currentTailCoordinates = {
-        'x': 0,
-        'y': 0
-    };
+    for (let i = 0; i < knotCount; i++) {
+        knots.push({
+            'x': 0,
+            'y': 0,
+            'num': i
+        });
+    }
 
+    let currentHeadCoordinates = knots[0];
 
-    drawGrid(grid);
+    let currentTailCoordinates = knots[knotCount - 1];
 
     for (let hs of headSteps) {
-        console.log(hs);
-
         switch(hs[0]) {
             case 'U':
                 for (let i = 0; i < Number(hs[1]); i++) {
-                    grid[currentHeadCoordinates.y][currentHeadCoordinates.x].head = false;
-
                     if (currentHeadCoordinates.y === 0) {
-                        grid[currentTailCoordinates.y][currentTailCoordinates.x].tail = false;
-                        currentTailCoordinates.y++;
+                        for (let j = 1; j < knots.length; j++) {
+                            knots[j].y++;
+                        }
 
                         let line = [];
 
                         for (let j = 0; j < grid[currentHeadCoordinates.y].length; j++) {
                             line.push({
-                                'tailVisited': false,
-                                'head': false,
-                                'tail': false
+                                'tailVisited': false
                             });
                         }
 
                         grid.unshift(line);
-                        grid[currentTailCoordinates.y][currentTailCoordinates.x].tail = true;
                     } else {
                         currentHeadCoordinates.y--;
                     }
 
-                    grid[currentHeadCoordinates.y][currentHeadCoordinates.x].head = true;
+                    for (let i = 1; i < knotCount; i++) {
+                        moveNextKnot(knots[i-1], knots[i]);
+                    }
 
-                    drawGrid(grid);
-                    moveTail(currentHeadCoordinates, currentTailCoordinates, grid);
-                    drawGrid(grid);
+                    grid[currentTailCoordinates.y][currentTailCoordinates.x].tailVisited = true;
                 }
                 break;
             case 'D':
                 for (let i = 0; i < hs[1]; i++) {
-                    grid[currentHeadCoordinates.y][currentHeadCoordinates.x].head = false;
-
                     if (currentHeadCoordinates.y === grid.length - 1) {
                         let line = [];
 
                         for (let j = 0; j < grid[currentHeadCoordinates.y].length; j++) {
                             line.push({
-                                'tailVisited': false,
-                                'head': false,
-                                'tail': false
+                                'tailVisited': false
                             });
                         }
 
                         grid.push(line);
                     }
 
-                    grid[currentHeadCoordinates.y + 1][currentHeadCoordinates.x].head = true;
                     currentHeadCoordinates.y++;
 
-                    drawGrid(grid);
-                    moveTail(currentHeadCoordinates, currentTailCoordinates, grid);
-                    drawGrid(grid);
+                    for (let i = 1; i < knotCount; i++) {
+                        moveNextKnot(knots[i-1], knots[i]);
+                    }
+
+                    grid[currentTailCoordinates.y][currentTailCoordinates.x].tailVisited = true;
                 }
                 break;
             case 'L':
                 for (let i = 0; i < hs[1]; i++) {
-                    grid[currentHeadCoordinates.y][currentHeadCoordinates.x].head = false;
-
                     if (currentHeadCoordinates.x === 0) {
-                        grid[currentTailCoordinates.y][currentTailCoordinates.x].tail = false;
-                        currentTailCoordinates.x++;
+                        for (let j = 1; j < knots.length; j++) {
+                            knots[j].x++;
+                        }
 
                         for (let j = 0; j < grid.length; j++) {
                             grid[j].unshift({
-                                'tailVisited': false,
-                                'head': false,
-                                'tail': false
+                                'tailVisited': false
                             })
                         }
-
-                        grid[currentHeadCoordinates.y][currentHeadCoordinates.x].head = true;
-                        grid[currentTailCoordinates.y][currentTailCoordinates.x].tail = true;
                     } else {
-                        grid[currentHeadCoordinates.y][currentHeadCoordinates.x - 1].head = true;
                         currentHeadCoordinates.x--;
                     }
 
-                    drawGrid(grid);
-                    moveTail(currentHeadCoordinates, currentTailCoordinates, grid);
-                    drawGrid(grid);
+                    for (let i = 1; i < knotCount; i++) {
+                        moveNextKnot(knots[i-1], knots[i]);
+                    }
+
+                    grid[currentTailCoordinates.y][currentTailCoordinates.x].tailVisited = true;
                 }
                 break;
             case 'R':
                 for (let i = 0; i < hs[1]; i++) {
-                    grid[currentHeadCoordinates.y][currentHeadCoordinates.x].head = false;
-
                     if (currentHeadCoordinates.x === grid[currentHeadCoordinates.y].length - 1) {
                         for (let j = 0; j < grid.length; j++) {
                             grid[j].push({
-                                'tailVisited': false,
-                                'head': false,
-                                'tail': false
+                                'tailVisited': false
                             });
                         }
                     }
 
-                    grid[currentHeadCoordinates.y][currentHeadCoordinates.x + 1].head = true;
                     currentHeadCoordinates.x++;
 
-                    drawGrid(grid);
-                    moveTail(currentHeadCoordinates, currentTailCoordinates, grid);
-                    drawGrid(grid);
+                    for (let i = 1; i < knotCount; i++) {
+                        moveNextKnot(knots[i-1], knots[i]);
+                    }
+
+                    grid[currentTailCoordinates.y][currentTailCoordinates.x].tailVisited = true;
                 }
                 break;
         }
     }
 
     countVisited(grid);
-});
-
-function moveTail(currentHeadCoordinates, currentTailCoordinates, grid) {
-    grid[currentTailCoordinates.y][currentTailCoordinates.x].tail = false;
-
-    if (currentHeadCoordinates.x === currentTailCoordinates.x + 2 && currentHeadCoordinates.y === currentTailCoordinates.y) {
-        currentTailCoordinates.x++;
-    } else if (currentHeadCoordinates.x === currentTailCoordinates.x - 2 && currentHeadCoordinates.y === currentTailCoordinates.y) {
-        currentTailCoordinates.x--;
-    } else if (currentHeadCoordinates.y === currentTailCoordinates.y + 2 && currentHeadCoordinates.x === currentTailCoordinates.x) {
-        currentTailCoordinates.y++;
-    } else if (currentHeadCoordinates.y === currentTailCoordinates.y - 2 && currentHeadCoordinates.x === currentTailCoordinates.x) {
-        currentTailCoordinates.y--;
-    } else if (!isAdjacent(currentHeadCoordinates, currentTailCoordinates) && (currentHeadCoordinates.x !== currentTailCoordinates.x || currentHeadCoordinates.y !== currentTailCoordinates.y)) {
-        if (currentHeadCoordinates.x > currentTailCoordinates.x && currentHeadCoordinates.y > currentTailCoordinates.y) {
-            currentTailCoordinates.x++;
-            currentTailCoordinates.y++;
-        } else if (currentHeadCoordinates.x > currentTailCoordinates.x && currentHeadCoordinates.y < currentTailCoordinates.y) {
-            currentTailCoordinates.x++;
-            currentTailCoordinates.y--;
-        } else if (currentHeadCoordinates.x < currentTailCoordinates.x && currentHeadCoordinates.y > currentTailCoordinates.y) {
-            currentTailCoordinates.x--;
-            currentTailCoordinates.y++;
-        } else if (currentHeadCoordinates.x < currentTailCoordinates.x && currentHeadCoordinates.y < currentTailCoordinates.y) {
-            currentTailCoordinates.x--;
-            currentTailCoordinates.y--;
-        }
-    }
-
-    grid[currentTailCoordinates.y][currentTailCoordinates.x].tail = true;
-    grid[currentTailCoordinates.y][currentTailCoordinates.x].tailVisited = true;
 }
 
-function isAdjacent(currentHeadCoordinates, currentTailCoordinates) {
-    if (Math.abs(currentHeadCoordinates.x - currentTailCoordinates.x) > 1 ||
-        Math.abs(currentHeadCoordinates.y - currentTailCoordinates.y) > 1) {
+function moveNextKnot(prevKnot, nextKnot) {
+    if (prevKnot.x === nextKnot.x + 2 && prevKnot.y === nextKnot.y) {
+        nextKnot.x++;
+    } else if (prevKnot.x === nextKnot.x - 2 && prevKnot.y === nextKnot.y) {
+        nextKnot.x--;
+    } else if (prevKnot.y === nextKnot.y + 2 && prevKnot.x === nextKnot.x) {
+        nextKnot.y++;
+    } else if (prevKnot.y === nextKnot.y - 2 && prevKnot.x === nextKnot.x) {
+        nextKnot.y--;
+    } else if (!isAdjacent(prevKnot, nextKnot) && (prevKnot.x !== nextKnot.x || prevKnot.y !== nextKnot.y)) {
+        if (prevKnot.x > nextKnot.x && prevKnot.y > nextKnot.y) {
+            nextKnot.x++;
+            nextKnot.y++;
+        } else if (prevKnot.x > nextKnot.x && prevKnot.y < nextKnot.y) {
+            nextKnot.x++;
+            nextKnot.y--;
+        } else if (prevKnot.x < nextKnot.x && prevKnot.y > nextKnot.y) {
+            nextKnot.x--;
+            nextKnot.y++;
+        } else if (prevKnot.x < nextKnot.x && prevKnot.y < nextKnot.y) {
+            nextKnot.x--;
+            nextKnot.y--;
+        }
+    }
+}
+
+function isAdjacent(prevKnot, nextKnot) {
+    if (Math.abs(prevKnot.x - nextKnot.x) > 1 ||
+        Math.abs(prevKnot.y - nextKnot.y) > 1) {
         return false;
     } else {
         return true;
-    }
-}
-
-function drawGrid(grid) {
-    let draw = false;
-
-    if (draw) {
-        for (let y of grid) {
-            let line = '';
-            for (let x of y) {
-                let character = '.';
-
-                if (x.head) {
-                    character = 'H';
-                } else if (x.tail) {
-                    character = 'T';
-                }
-
-                line += character;
-            }
-            console.log(line);
-        }
-
-        console.log('------------');
     }
 }
 
