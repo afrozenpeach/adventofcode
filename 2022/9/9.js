@@ -10,7 +10,7 @@ fs.readFile(filePath, 'utf8', (err, data) => {
     }
 
     var headSteps = data.split('\n').map(l => l.split(' '));
-    //knotMovement(headSteps, 2);
+    knotMovement(headSteps, 2);
     knotMovement(headSteps, 10);
 });
 
