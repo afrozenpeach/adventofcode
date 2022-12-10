@@ -27,6 +27,16 @@ fs.readFile(filePath, 'utf8', (err, data) => {
 
     while (true) {
         let currentCommand = commands[commandIndex];
+
+        if (cycleChecks.includes(cycles)) {
+            sumChecks += (cycles * x);
+            cycleChecks.shift();
+
+            if (cycleChecks.length === 0) {
+                break;
+            }
+        }
+
         switch (currentCommand.command) {
             case 'addx':
                 if (skipCycle) {
@@ -40,15 +50,6 @@ fs.readFile(filePath, 'utf8', (err, data) => {
             case 'noop':
                 commandIndex++;
                 break;
-        }
-
-        if (cycleChecks.includes(cycles)) {
-            sumChecks += (cycles * x);
-            cycleChecks.shift();
-
-            if (cycleChecks.length === 0) {
-                break;
-            }
         }
 
         cycles++;
