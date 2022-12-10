@@ -22,19 +22,39 @@ fs.readFile(filePath, 'utf8', (err, data) => {
     let sumChecks = 0;
     let commandIndex = 0;
     let skipCycle = false;
+    let currentLine = 0;
+    let totalLines = 6;
+    let currentPixel = 0;
 
     let cycleChecks = [20, 60, 100, 140, 180, 220];
 
-    while (true) {
+    let consoleLine = '';
+
+    while(true) {
         let currentCommand = commands[commandIndex];
 
         if (cycleChecks.includes(cycles)) {
             sumChecks += (cycles * x);
             cycleChecks.shift();
+        }
 
-            if (cycleChecks.length === 0) {
-                break;
-            }
+        if (currentPixel === x - 1 || currentPixel === x || currentPixel === x+1) {
+            consoleLine += '#';
+        } else {
+            consoleLine += '.'
+        }
+
+        currentPixel++;
+
+        if (cycles % 40 === 0) {
+            console.log(consoleLine);
+            consoleLine = '';
+            currentLine++;
+            currentPixel = 0;
+        }
+
+        if (currentLine === totalLines) {
+            break;
         }
 
         switch (currentCommand.command) {
@@ -55,5 +75,5 @@ fs.readFile(filePath, 'utf8', (err, data) => {
         cycles++;
     }
 
-    console.log(sumChecks);
+    //console.log(sumChecks);
 });
