@@ -13,11 +13,11 @@ fs.readFile(filePath, 'utf8', (err, data) => {
 
         return {
             'id': Number(monkeyLines[0].split(' ')[1][0]),
-            'items': monkeyLines[1].split(': ')[1].split(', ').map(i => Number(i)),
+            'items': monkeyLines[1].split(': ')[1].split(', ').map(i => BigInt(i)),
             'operation': monkeyLines[2].split(' ')[6],
             'operationValue': Number(monkeyLines[2].split(' ')[7]),
             'test': {
-                'divisibleBy': Number(monkeyLines[3].split(' by ')[1]),
+                'divisibleBy': BigInt(monkeyLines[3].split(' by ')[1]),
                 'ifTrue': Number(monkeyLines[4].split(' monkey ')[1]),
                 'ifFalse': Number(monkeyLines[5].split(' monkey ')[1])
             },
@@ -35,13 +35,17 @@ fs.readFile(filePath, 'utf8', (err, data) => {
 });
 
 function monkeyRounds(monkies, rounds, worryDivider) {
+    let modulus = monkies
+      .map(m => m.test.divisibleBy)
+      .reduce((product, divisor) => product * divisor);
+
     for (let i = 0, currentMonkeyId = 0; i < rounds;) {
         let currentMonkey = monkies.find(m => m.id === currentMonkeyId);
 
         while (currentMonkey.items.length > 0)
         {
             let currentItem = currentMonkey.items.shift();
-            let operationValue = isNaN(currentMonkey.operationValue) ? currentItem : currentMonkey.operationValue;
+            let operationValue = isNaN(currentMonkey.operationValue) ? currentItem : BigInt(currentMonkey.operationValue);
 
             //Monkey inspects item
             currentMonkey.inspectionCount++;
@@ -49,19 +53,21 @@ function monkeyRounds(monkies, rounds, worryDivider) {
             switch (currentMonkey.operation)
             {
                 case '+':
-                    currentItem += operationValue;
+                    currentItem = (currentItem + operationValue) % modulus;
                     break;
                 case '*':
-                    currentItem *= operationValue;
+                    currentItem = (currentItem * operationValue) % modulus;
                     break;
             }
 
             //Monkey gets bored with item
-            currentItem = Math.floor(currentItem / worryDivider);
+            if (worryDivider > 1) {
+                currentItem = currentItem / BigInt(worryDivider);
+            }
 
             //Monkey throws item
             let monkeyToThrow = undefined;
-            if (currentItem % currentMonkey.test.divisibleBy === 0) {
+            if (currentItem % currentMonkey.test.divisibleBy === 0n) {
                 monkeyToThrow = monkies.find(m => m.id === currentMonkey.test.ifTrue);
             } else {
                 monkeyToThrow = monkies.find(m => m.id === currentMonkey.test.ifFalse);
@@ -75,6 +81,7 @@ function monkeyRounds(monkies, rounds, worryDivider) {
         if (currentMonkeyId >= monkies.length) {
             currentMonkeyId = 0;
             i++;
+            console.log(i);
         }
     }
 
