@@ -202,7 +202,7 @@ function possibleNextPositions(grid, currentPosition, decisions, steps) {
 
     //filter previous decisions
     positions = positions.filter(p => {
-        let d = decisions.filter(d => currentPosition.x === d.x && currentPosition.y === d.y && p.direction === d.direction)
+        let d = decisions.filter(d => d.step === steps + 1 && currentPosition.x === d.x && currentPosition.y === d.y && p.direction === d.direction)
 
         if (d.length > 0) {
             return false;
